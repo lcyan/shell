@@ -200,8 +200,7 @@ ip_list=("219.141.147.210" "202.106.50.1" "221.179.155.161" \
          "202.112.14.151")
 
 ip_addr=("北京电信" "北京联通" "北京移动" \
-         "山西电信" "山西联通" "山西移动" \
-         "成都教育网")
+         "山西电信" "山西联通" "山西移动")
 
 isp_codes=("CT" "CU" "CM" "CT" "CU" "CM" "CT" "CU" "CM" "CT" "CU" "CM" "EDU")
 
@@ -222,7 +221,6 @@ echo -e "${GREEN}0.${PLAIN} 测试所有节点 (默认 - 直接回车)"
 echo -e "${SKYBLUE}1.${PLAIN} 仅测试 电信 (China Telecom)"
 echo -e "${SKYBLUE}2.${PLAIN} 仅测试 联通 (China Unicom)"
 echo -e "${SKYBLUE}3.${PLAIN} 仅测试 移动 (China Mobile)"
-echo -e "${SKYBLUE}4.${PLAIN} 仅测试 教育网 (Education)"
 echo -e "${YELLOW}5.${PLAIN} 自定义 IP 测试 (自动识别运营商)"
 echo ""
 read -p "请输入选项 [0-5]: " choice < /dev/tty
@@ -234,7 +232,6 @@ case $choice in
     1) mode_name="仅测试 电信 (China Telecom)" ;;
     2) mode_name="仅测试 联通 (China Unicom)" ;;
     3) mode_name="仅测试 移动 (China Mobile)" ;;
-    4) mode_name="仅测试 教育网 (Education)" ;;
     5) mode_name="自定义 IP 测试" ;;
     *) mode_name="未知模式" ;;
 esac
