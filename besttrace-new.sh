@@ -55,18 +55,18 @@ analyze_route() {
     local isp_type=$2
     local target_name=$3
     local target_ip=$4
-    
+
     local clean_content=$(echo "$log_content" | sed 's/\x1b\[[0-9;]*m//g')
-    
+
     # --- 特征提取 ---
     local has_as4809=$(echo "$clean_content" | grep -E "AS4809|59\.43\.")
     local has_as9929=$(echo "$clean_content" | grep -E "AS9929|99\.29\.|AS10099")
     local has_as4837=$(echo "$clean_content" | grep -E "AS4837|219\.158\.")
-    
+
     # 移动线路特征修正
-    local has_cmin2=$(echo "$clean_content" | grep -E "AS58807") 
+    local has_cmin2=$(echo "$clean_content" | grep -E "AS58807")
     local has_cmi=$(echo "$clean_content" | grep -E "AS58453|AS9808|223\.120\.")
-    
+
     # 国内段特征
     local domestic_segment=$(echo "$clean_content" | grep -iE "China|CN|Beijing|Shanghai|Guangzhou|Shenzhen|Chengdu|Anhui|Sichuan|Guangdong")
     local domestic_has_4809=$(echo "$domestic_segment" | grep -E "AS4809|59\.43\.")
@@ -82,7 +82,7 @@ analyze_route() {
         echo -e "   类型：${GREEN}${BOLD}电信 CN2 GIA (AS4809)${PLAIN}"
         echo -e "   详情：检测到回程国内段走 AS4809，顶级线路。"
         ret_color_type="${GREEN}CN2 GIA${PLAIN}"
-        
+
     # 2. 联通 9929
     elif [ -n "$has_as9929" ]; then
         echo -e "   类型：${GREEN}${BOLD}联通 9929 (CU Premium)${PLAIN}"
@@ -178,10 +178,10 @@ print_final_summary() {
     # 网址行: # + 5空 + 文字(10+38=48) + 6空 + # = 61
     echo -e "${GREEN}#     官网地址：https://besttrace.sh | https://bwg.net      #${PLAIN}"
     echo -e "${GREEN}#############################################################${PLAIN}"
-    
+
     echo -e "节点名称         IP 地址            线路类型"
     echo "-------------------------------------------------------------"
-    
+
     for line in "${ROWS_CT[@]}"; do echo -e "$line"; done
     for line in "${ROWS_CU[@]}"; do echo -e "$line"; done
     for line in "${ROWS_CM[@]}"; do echo -e "$line"; done
@@ -195,14 +195,11 @@ print_final_summary() {
 }
 
 # 4. 定义数据源
-ip_list=("219.141.147.210" "202.106.50.1" "221.179.155.161" \
-         "219.149.194.55" "202.99.192.66" "211.138.240.100" \
-         "202.112.14.151")
+ip_list=("219.141.147.210" "202.106.50.1" "221.179.155.161")
 
-ip_addr=("北京电信" "北京联通" "北京移动" \
-         "山西电信" "山西联通" "山西移动")
+ip_addr=("北京电信" "北京联通" "北京移动")
 
-isp_codes=("CT" "CU" "CM" "CT" "CU" "CM" "CT" "CU" "CM" "CT" "CU" "CM" "EDU")
+isp_codes=("CT" "CU" "CM")
 
 # 5. 交互菜单逻辑
 clear
@@ -217,26 +214,20 @@ echo -e "${GREEN}#     官网地址：https://besttrace.sh | https://bwg.net    
 echo -e "${GREEN}#############################################################${PLAIN}"
 
 echo -e "请选择测试模式："
-echo -e "${GREEN}0.${PLAIN} 测试所有节点 (默认 - 直接回车)"
-echo -e "${SKYBLUE}1.${PLAIN} 仅测试 电信 (China Telecom)"
-echo -e "${SKYBLUE}2.${PLAIN} 仅测试 联通 (China Unicom)"
-echo -e "${SKYBLUE}3.${PLAIN} 仅测试 移动 (China Mobile)"
-echo -e "${YELLOW}5.${PLAIN} 自定义 IP 测试 (自动识别运营商)"
+echo -e "${GREEN}0.${PLAIN} 测试所有北京节点 (默认 - 直接回车)"
+echo -e "${YELLOW}1.${PLAIN} 自定义 IP 测试 (自动识别运营商)"
 echo ""
-read -p "请输入选项 [0-5]: " choice < /dev/tty
+read -p "请输入选项 [0-1]: " choice < /dev/tty
 
 if [[ -z "$choice" ]]; then choice="0"; fi
 
 case $choice in
-    0) mode_name="测试所有节点" ;;
-    1) mode_name="仅测试 电信 (China Telecom)" ;;
-    2) mode_name="仅测试 联通 (China Unicom)" ;;
-    3) mode_name="仅测试 移动 (China Mobile)" ;;
-    5) mode_name="自定义 IP 测试" ;;
+    0) mode_name="测试所有北京节点" ;;
+    1) mode_name="自定义 IP 测试" ;;
     *) mode_name="未知模式" ;;
 esac
 
-if [[ "$choice" == "5" ]]; then
+if [[ "$choice" == "1" ]]; then
     echo ""
     read -p "请输入目标 IP: " custom_ip < /dev/tty
     echo -e "\n正在测试: ${GREEN}自定义测速点${PLAIN} [${custom_ip}]"
@@ -260,24 +251,13 @@ for ((i=0; i<len; i++)); do
     target_ip=${ip_list[$i]}
     target_name=${ip_addr[$i]}
     isp_type=${isp_codes[$i]}
-    
-    should_run=false
-    case $choice in
-        0) should_run=true ;;
-        1) if [[ "$isp_type" == "CT" ]]; then should_run=true; fi ;;
-        2) if [[ "$isp_type" == "CU" ]]; then should_run=true; fi ;;
-        3) if [[ "$isp_type" == "CM" ]]; then should_run=true; fi ;;
-        4) if [[ "$isp_type" == "EDU" ]]; then should_run=true; fi ;;
-    esac
-    
-    if $should_run; then
-        ((count++))
-        echo -e "正在测试: ${GREEN}${target_name}${PLAIN} [${target_ip}]"
-        nexttrace "$target_ip" -q 1 -M | tee /tmp/nt_temp.log
-        analyze_route "$(cat /tmp/nt_temp.log)" "$isp_type" "$target_name" "$target_ip"
-        next
-        sleep 1
-    fi
+
+    ((count++))
+    echo -e "正在测试: ${GREEN}${target_name}${PLAIN} [${target_ip}]"
+    nexttrace "$target_ip" -q 1 -M | tee /tmp/nt_temp.log
+    analyze_route "$(cat /tmp/nt_temp.log)" "$isp_type" "$target_name" "$target_ip"
+    next
+    sleep 1
 done
 
 rm -f /tmp/nt_temp.log
