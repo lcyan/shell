@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# apt -y install unzip
+# Usage (local): bash autoBestTrace-old.sh
+# Usage (remote): curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/autoBestTrace-old.sh | bash
+# Direct binary example: ./besttrace2021 -q 1 219.141.147.210
 
 # install besttrace
 if [ ! -f "besttrace2021" ]; then

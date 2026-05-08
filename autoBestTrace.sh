@@ -6,6 +6,8 @@
 # 更新日志：
 # 1. 更新 Banner 文案与排版，严格对齐 61 字符边框
 # 2. 包含 v4.9 的所有移动线路修正 (CMIN2/AS58807)
+# Usage (local): sudo bash autoBestTrace.sh
+# Usage (remote): curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/autoBestTrace.sh | sudo bash
 # =========================================================
 
 # 定义颜色
@@ -171,11 +173,8 @@ detect_isp_type() {
 print_final_summary() {
     echo ""
     echo -e "${GREEN}#############################################################${PLAIN}"
-    # 标题行: # + 9空 + 文字(34+7=41) + 9空 + # = 61
     echo -e "${GREEN}#         BestTrace.sh - Linux VPS 回程路由一键测试         #${PLAIN}"
-    # 方法行: # + 10空 + 文字(10+29=39) + 10空 + # = 61
-    echo -e "${GREEN}#          使用方法：wget -qO- besttrace.sh | bash          #${PLAIN}"
-    # 网址行: # + 5空 + 文字(10+38=48) + 6空 + # = 61
+    echo -e "${GREEN}#      仓库命令：sudo bash autoBestTrace.sh                #${PLAIN}"
     echo -e "${GREEN}#     官网地址：https://besttrace.sh | https://bwg.net      #${PLAIN}"
     echo -e "${GREEN}#############################################################${PLAIN}"
 
@@ -203,13 +202,9 @@ isp_codes=("CT" "CU" "CM")
 
 # 5. 交互菜单逻辑
 clear
-# === 头部 Banner 更新 (严格对齐) ===
 echo -e "${GREEN}#############################################################${PLAIN}"
-# 标题行: # + 9空 + 文字(41) + 9空 + # = 61
 echo -e "${GREEN}#         BestTrace.sh - Linux VPS 回程路由一键测试         #${PLAIN}"
-# 方法行: # + 10空 + 文字(39) + 10空 + # = 61
-echo -e "${GREEN}#          使用方法：wget -qO- besttrace.sh | bash          #${PLAIN}"
-# 网址行: # + 5空 + 文字(48) + 6空 + # = 61
+echo -e "${GREEN}#      仓库命令：sudo bash autoBestTrace.sh                #${PLAIN}"
 echo -e "${GREEN}#     官网地址：https://besttrace.sh | https://bwg.net      #${PLAIN}"
 echo -e "${GREEN}#############################################################${PLAIN}"
 

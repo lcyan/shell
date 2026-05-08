@@ -1,31 +1,89 @@
 # shell
 
+当前仓库是一个小型 Shell 脚本集合，主要包含回程路由测试、`fzf` 安装更新，以及 DNS 配置辅助脚本。以下命令均以当前仓库根目录为准。
+
 ## 回程路由测试
 
-【2025-12】上线全新 BestTrace.sh
+### `autoBestTrace.sh`
+主入口。自动检查 Root、按需安装 `nexttrace`，默认测试北京电信/联通/移动，也支持手动输入自定义 IP。
 
-核心亮点：
+本地运行：
 
- - 方便的一键运行：无需复杂的依赖安装，只需一行命令即可进行测试。
- - 深度融合 NextTrace：底层采用了更为先进、可视化的 NextTrace 路由追踪引擎，使用了 LeoMoeAPI 等高精度 IP 库，能够准确显示每一跳的物理位置和运营商信息
- - 智能线路分析：不同于传统的只显示 IP 跳数，该脚本内置了智能分析功能。它能自动识别并标注关键线路类型（如 CN2 GIA、移动 CMIN2、联通 9929 等），让小白用户也能一眼看懂线路质量。
- - 更全的测试节点：本次优化并新增了部分测试节点，网络类型包括电信、联通、移动、教育网，测试地点包含北京、上海、广州、成都等。
- - 直观的测评汇总：在所有节点测试完成后，脚本会汇总一个测试结果，免去繁杂的手动分析环节。
+```bash
+sudo bash autoBestTrace.sh
+```
 
-使用方法：
+远程运行：
 
-    wget -qO- besttrace.sh | bash
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/autoBestTrace.sh | sudo bash
+```
 
-官网地址：https://besttrace.sh
+### `besttrace-new.sh`
+当前内容与 `autoBestTrace.sh` 基本一致，可作为备用入口。
 
-详情介绍：https://www.bandwagonhost.net/16156.html
+本地运行：
 
-旧版依旧可以使用：
+```bash
+sudo bash besttrace-new.sh
+```
 
-    wget -qO- git.io/besttrace | bash
-    
-旧版介绍：https://www.bandwagonhost.net/2345.html
-    
-## 一键迁入 DC8（已废弃，不建议使用）
+远程运行：
 
-详情介绍：https://www.bandwagonhost.net/2341.html
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/besttrace-new.sh | sudo bash
+```
+
+### `autoBestTrace-old.sh`
+旧版回程测试脚本，使用仓库内的 `besttrace2021` 二进制；若文件不存在，脚本会自动下载。
+
+```bash
+bash autoBestTrace-old.sh
+```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/autoBestTrace-old.sh | bash
+```
+
+如需直接调用旧版二进制，可手动执行：
+
+```bash
+./besttrace2021 -q 1 219.141.147.210
+```
+
+## 其他脚本
+
+### `install_or_update_fzf.sh`
+安装或更新 `fzf` 到 `~/.fzf`，并写入 `~/.bashrc`。
+
+本地运行：
+
+```bash
+bash install_or_update_fzf.sh
+```
+
+远程运行：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/install_or_update_fzf.sh | bash
+```
+
+### `setup_dns.sh`
+重置 `systemd-resolved` 相关配置，修改 `/etc/resolv.conf` 与 `/etc/systemd/resolved.conf`，需要 Root。当前脚本写入的是 `DNSOverTLS=no`。
+
+本地运行：
+
+```bash
+sudo bash setup_dns.sh
+```
+
+远程运行：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/setup_dns.sh | sudo bash
+```
+
+## 说明
+
+- `besttrace2021` 是旧版脚本依赖的二进制文件，不建议随意替换。
+- `setup_dns.sh`、`autoBestTrace.sh`、`besttrace-new.sh` 都会修改系统状态或依赖网络，建议在可回滚环境中测试。
