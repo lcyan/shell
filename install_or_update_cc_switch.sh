@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 # Usage (local): bash install_or_update_cc_switch.sh
 # Usage (remote): curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/install_or_update_cc_switch.sh | bash
-# Supported: Linux amd64/x86_64 and arm64/aarch64 via official CC Switch .AppImage release
+# Supported: Debian/Ubuntu amd64 and arm64 via official CC Switch .deb package
 
 set -euo pipefail
 
 REPO="farion1231/cc-switch"
-INSTALL_DIR="${INSTALL_DIR:-${HOME}/.local/bin}"
-APP_PATH="${APP_PATH:-${INSTALL_DIR}/cc-switch.AppImage}"
-CMD_PATH="${CMD_PATH:-${INSTALL_DIR}/cc-switch}"
-TMP_PATH=""
+DEB_PATH="/tmp/cc-switch.deb"
 
 log() {
     printf '[INFO] %s\n' "$*"
@@ -26,31 +23,24 @@ need_cmd() {
     fi
 }
 
-cleanup() {
-    if [ -n "${TMP_PATH}" ] && [ -f "${TMP_PATH}" ]; then
-        rm -f "${TMP_PATH}"
-    fi
-}
-trap cleanup EXIT
-
-need_cmd uname
+need_cmd dpkg
 need_cmd curl
 need_cmd grep
-need_cmd mkdir
-need_cmd chmod
-need_cmd ln
+need_cmd sudo
+need_cmd apt
 
-arch="$(uname -m)"
+arch="$(dpkg --print-architecture)"
+
 case "${arch}" in
-    x86_64|amd64)
+    amd64)
         asset_arch="x86_64"
         ;;
-    aarch64|arm64)
+    arm64)
         asset_arch="arm64"
         ;;
     *)
-        warn "Architecture ${arch} is not supported by the official Linux AppImage release."
-        warn "Supported architectures: x86_64/amd64, arm64/aarch64."
+        warn "Architecture ${arch} is not supported by the official .deb package."
+        warn "Please use the AppImage, .rpm package, or build CC Switch from source."
         exit 1
         ;;
 esac
@@ -65,35 +55,22 @@ if [ -z "${tag}" ]; then
     exit 1
 fi
 
-asset_name="CC-Switch-${tag}-Linux-${asset_arch}.AppImage"
-download_url="https://github.com/${REPO}/releases/latest/download/${asset_name}"
+asset_name="CC-Switch-${tag}-Linux-${asset_arch}.deb"
+url="https://github.com/${REPO}/releases/latest/download/${asset_name}"
 
 log "Detected architecture: ${arch} (${asset_arch})"
 log "Latest version: ${tag}"
-log "Downloading CC Switch AppImage: ${download_url}"
-mkdir -p "${INSTALL_DIR}"
-TMP_PATH="$(mktemp)"
-curl -fL --progress-bar "${download_url}" -o "${TMP_PATH}"
-chmod +x "${TMP_PATH}"
-mv "${TMP_PATH}" "${APP_PATH}"
-TMP_PATH=""
-ln -sf "${APP_PATH}" "${CMD_PATH}"
+log "Downloading CC Switch package: ${url}"
+curl -fL --progress-bar "${url}" -o "${DEB_PATH}"
 
-log "Installed CC Switch to ${APP_PATH}"
-log "Command symlink: ${CMD_PATH}"
+log "Installing CC Switch from ${DEB_PATH}"
+sudo apt install -y "${DEB_PATH}"
 
-if [ -x "${CMD_PATH}" ]; then
-    log "Verifying installation..."
-    "${CMD_PATH}" --version 2>/dev/null || log "CC Switch is installed. Launch it with: ${CMD_PATH}"
+log "Verifying installation..."
+if command -v cc-switch >/dev/null 2>&1; then
+    cc-switch --version 2>/dev/null || true
+    log "CC Switch installed successfully. Try: cc-switch"
 else
-    warn "cc-switch command was not found after installation. Please check ${INSTALL_DIR}."
+    warn "cc-switch command was not found after installation. Please check apt output above."
     exit 1
 fi
-
-case ":${PATH}:" in
-    *":${INSTALL_DIR}:"*)
-        ;;
-    *)
-        warn "${INSTALL_DIR} is not in PATH. Add it with: export PATH=\"${INSTALL_DIR}:\$PATH\""
-        ;;
-esac
