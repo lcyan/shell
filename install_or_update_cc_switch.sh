@@ -68,7 +68,6 @@ sudo apt install -y "${DEB_PATH}"
 
 log "Verifying installation..."
 if command -v cc-switch >/dev/null 2>&1; then
-    cc-switch --version 2>/dev/null || true
     log "CC Switch installed successfully. Try: cc-switch"
 else
     warn "cc-switch command was not found after installation. Please check apt output above."

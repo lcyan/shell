@@ -102,10 +102,9 @@ bash install_or_update_cc_switch.sh
 curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/install_or_update_cc_switch.sh | bash
 ```
 
-安装后可验证或启动：
+安装后可启动：
 
 ```bash
-cc-switch --version
 cc-switch
 ```
 
