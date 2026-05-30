@@ -1,6 +1,6 @@
 # shell
 
-当前仓库是一个小型 Shell 脚本集合，主要包含回程路由测试、`tcping` 一键安装、`fzf` 安装更新，以及 DNS 配置辅助脚本。以下命令均以当前仓库根目录为准。
+当前仓库是一个小型 Shell 脚本集合，主要包含回程路由测试、`tcping` 一键安装、CC Switch 安装更新、`fzf` 安装更新，以及 DNS 配置辅助脚本。以下命令均以当前仓库根目录为准。
 
 ## 网络工具安装
 
@@ -80,6 +80,47 @@ curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/autoBestTrace-ol
 ./besttrace2021 -q 1 219.141.147.210
 ```
 
+## 桌面工具安装
+
+### `install_or_update_cc_switch.sh`
+安装或更新 [CC Switch](https://github.com/farion1231/cc-switch)。脚本会自动识别 Linux 架构，并从官方 latest release 下载对应 AppImage 到 `~/.local/bin/cc-switch.AppImage`，同时创建 `~/.local/bin/cc-switch` 命令软链接。
+
+当前支持：
+
+- `x86_64` / `amd64`：下载 `CC-Switch-<version>-Linux-x86_64.AppImage`
+- `arm64` / `aarch64`：下载 `CC-Switch-<version>-Linux-arm64.AppImage`
+
+本地运行：
+
+```bash
+bash install_or_update_cc_switch.sh
+```
+
+远程运行：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/install_or_update_cc_switch.sh | bash
+```
+
+自定义安装位置：
+
+```bash
+INSTALL_DIR="$HOME/.local/bin" bash install_or_update_cc_switch.sh
+```
+
+安装后可验证或启动：
+
+```bash
+cc-switch --version
+cc-switch
+```
+
+如果 `~/.local/bin` 不在 `PATH` 中，请添加：
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
 ## 其他脚本
 
 ### `install_or_update_fzf.sh`
@@ -115,5 +156,6 @@ curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/setup_dns.sh | s
 ## 说明
 
 - `install_tcping.sh` 适用于 Debian/Ubuntu 的 `amd64` 和 `arm64`；其他架构请改用官方 tar.gz 或源码编译。
+- `install_or_update_cc_switch.sh` 适用于 Linux `x86_64`/`amd64` 和 `arm64`/`aarch64`，默认安装到 `~/.local/bin`。
 - `besttrace2021` 是旧版脚本依赖的二进制文件，不建议随意替换。
 - `setup_dns.sh`、`autoBestTrace.sh`、`besttrace-new.sh` 都会修改系统状态或依赖网络，建议在可回滚环境中测试。
