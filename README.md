@@ -1,6 +1,35 @@
 # shell
 
-当前仓库是一个小型 Shell 脚本集合，主要包含回程路由测试、`fzf` 安装更新，以及 DNS 配置辅助脚本。以下命令均以当前仓库根目录为准。
+当前仓库是一个小型 Shell 脚本集合，主要包含回程路由测试、`tcping` 一键安装、`fzf` 安装更新，以及 DNS 配置辅助脚本。以下命令均以当前仓库根目录为准。
+
+## 网络工具安装
+
+### `install_tcping.sh`
+一键安装 [tcping](https://github.com/pouriyajamshidi/tcping)。脚本会自动识别 Debian/Ubuntu 系统架构，并从官方 latest release 下载对应 `.deb` 包安装。
+
+当前支持：
+
+- `amd64`：下载 `tcping-amd64.deb`
+- `arm64`：下载 `tcping-arm64.deb`
+
+本地运行：
+
+```bash
+bash install_tcping.sh
+```
+
+远程运行：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/install_tcping.sh | bash
+```
+
+安装后可验证：
+
+```bash
+tcping -v
+tcping www.example.com 443 -c 3
+```
 
 ## 回程路由测试
 
@@ -85,5 +114,6 @@ curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/setup_dns.sh | s
 
 ## 说明
 
+- `install_tcping.sh` 适用于 Debian/Ubuntu 的 `amd64` 和 `arm64`；其他架构请改用官方 tar.gz 或源码编译。
 - `besttrace2021` 是旧版脚本依赖的二进制文件，不建议随意替换。
 - `setup_dns.sh`、`autoBestTrace.sh`、`besttrace-new.sh` 都会修改系统状态或依赖网络，建议在可回滚环境中测试。
