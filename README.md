@@ -48,6 +48,34 @@ sudo bash autoBestTrace.sh
 curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/autoBestTrace.sh | sudo bash
 ```
 
+
+### `besttracev6.sh`
+IPv6 回程路由测试入口。自动检查并按需安装 `nexttrace`，默认测试电信/联通/移动/教育网 IPv6 节点；也支持自定义 IPv6 地址，并可额外检查本机 IPv6 连通性。
+
+本地运行：
+
+```bash
+sudo bash besttracev6.sh
+```
+
+远程运行：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/besttracev6.sh | sudo bash
+```
+
+自定义 IPv6 测试：
+
+```bash
+sudo bash besttracev6.sh -i 2606:4700:4700::1111
+```
+
+连通性检查 + 自定义 IPv6 测试：
+
+```bash
+sudo bash besttracev6.sh -a -i 2606:4700:4700::1111
+```
+
 ### `besttrace-new.sh`
 当前内容与 `autoBestTrace.sh` 基本一致，可作为备用入口。
 
@@ -145,4 +173,4 @@ curl -fsSL https://raw.githubusercontent.com/lcyan/shell/master/setup_dns.sh | s
 - `install_tcping.sh` 适用于 Debian/Ubuntu 的 `amd64` 和 `arm64`；其他架构请改用官方 tar.gz 或源码编译。
 - `install_or_update_cc_switch.sh` 适用于 Debian/Ubuntu 的 `amd64` 和 `arm64`；其他 Linux 发行版请改用官方 AppImage、RPM 或源码编译。
 - `besttrace2021` 是旧版脚本依赖的二进制文件，不建议随意替换。
-- `setup_dns.sh`、`autoBestTrace.sh`、`besttrace-new.sh` 都会修改系统状态或依赖网络，建议在可回滚环境中测试。
+- `setup_dns.sh`、`autoBestTrace.sh`、`besttrace-new.sh`、`besttracev6.sh` 都会修改系统状态或依赖网络，建议在可回滚环境中测试。
